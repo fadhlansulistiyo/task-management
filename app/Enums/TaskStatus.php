@@ -56,4 +56,18 @@ enum TaskStatus: string
     {
         return in_array($this, [self::COMPLETED, self::CANCELLED]);
     }
+
+    /**
+     * Get all statuses as array with value and label
+     */
+    public static function toArray(): array
+    {
+        return array_map(
+            fn($case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ],
+            self::cases()
+        );
+    }
 }

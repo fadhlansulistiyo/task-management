@@ -218,6 +218,7 @@ class TaskService
             'pending' => (clone $baseQuery)->pending()->count(),
             'in_progress' => (clone $baseQuery)->inProgress()->count(),
             'completed' => (clone $baseQuery)->completed()->count(),
+            'cancelled' => (clone $baseQuery)->where('status', TaskStatus::CANCELLED)->count(),
             'overdue' => (clone $baseQuery)->overdue()->count(),
             'due_soon' => (clone $baseQuery)->dueSoon()->count(),
             'high_priority' => (clone $baseQuery)->highPriority()->count(),

@@ -46,7 +46,9 @@ class ProjectController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Projects/Create');
+        return Inertia::render('Projects/Create', [
+            'statuses' => \App\Enums\ProjectStatus::toArray(),
+        ]);
     }
 
     /**
@@ -84,6 +86,7 @@ class ProjectController extends Controller
     {
         return Inertia::render('Projects/Edit', [
             'project' => new ProjectResource($project),
+            'statuses' => \App\Enums\ProjectStatus::toArray(),
         ]);
     }
 

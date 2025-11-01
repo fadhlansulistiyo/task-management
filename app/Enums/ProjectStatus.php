@@ -45,4 +45,18 @@ enum ProjectStatus: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    /**
+     * Get all statuses as array with value and label
+     */
+    public static function toArray(): array
+    {
+        return array_map(
+            fn($case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ],
+            self::cases()
+        );
+    }
 }

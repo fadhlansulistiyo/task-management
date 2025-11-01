@@ -69,6 +69,8 @@ class TaskController extends Controller
         return Inertia::render('Tasks/Create', [
             'projects' => ProjectResource::collection($projects),
             'users' => UserResource::collection($users),
+            'priorities' => \App\Enums\TaskPriority::toArray(),
+            'statuses' => \App\Enums\TaskStatus::toArray(),
         ]);
     }
 
@@ -117,6 +119,8 @@ class TaskController extends Controller
             'task' => new TaskResource($task),
             'projects' => ProjectResource::collection($projects),
             'users' => UserResource::collection($users),
+            'priorities' => \App\Enums\TaskPriority::toArray(),
+            'statuses' => \App\Enums\TaskStatus::toArray(),
         ]);
     }
 
