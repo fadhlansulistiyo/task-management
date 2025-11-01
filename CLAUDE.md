@@ -74,7 +74,18 @@ npm run build
 - **Controllers**: Located in `app/Http/Controllers/`
   - `Auth/` - Authentication controllers provided by Breeze
   - `ProfileController.php` - User profile management
+  - `DashboardController.php` - Dashboard logic
+  - `ProjectController.php` - Project CRUD operations
+  - `TaskController.php` - Task CRUD operations
 - **Models**: Located in `app/Models/`
+  - `User.php` - User model with roles
+  - `Project.php` - Project model with status tracking and relationships
+  - `Task.php` - Task model with priority/status and relationships
+- **Enums**: Located in `app/Enums/`
+  - `UserRole.php` - User role enumeration
+  - `ProjectStatus.php` - Project status enumeration (ACTIVE, COMPLETED, etc.)
+  - `TaskStatus.php` - Task status enumeration (PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
+  - `TaskPriority.php` - Task priority enumeration
 - **Middleware**: Located in `app/Http/Middleware/`
 - **Form Requests**: Located in `app/Http/Requests/`
 - **Database**: Uses SQLite (`database/database.sqlite`)
@@ -91,8 +102,11 @@ npm run build
   - `Dashboard.jsx` - Main dashboard
   - `Welcome.jsx` - Public landing page
 - **Layouts**: `resources/js/Layouts/` - Shared layout components
+  - `AuthenticatedLayout.jsx` - Layout for authenticated users
+  - `GuestLayout.jsx` - Layout for guest users
 - **Components**: `resources/js/Components/` - Reusable React components
   - `ui/` - shadcn/ui components (button, card, dialog, etc.)
+  - Breeze components (TextInput, InputLabel, PrimaryButton, etc.)
 - **Hooks**: `resources/js/hooks/` - Custom React hooks
 - **Utilities**: `resources/js/lib/` - Utility functions (including `cn()` for className merging)
 - **Styles**: `resources/css/app.css` - Tailwind CSS entry point
@@ -136,6 +150,42 @@ To add new shadcn/ui components, you would typically use:
 npx shadcn@latest add [component-name]
 ```
 
+## Data Model Relationships
+
+The application has a task management system with the following key relationships:
+
+1. **User → Projects** (one-to-many): A user can own multiple projects
+2. **User → Tasks** (one-to-many): A user can be assigned to multiple tasks
+3. **Project → Tasks** (one-to-many): A project can have multiple tasks
+4. **Project → User** (belongs-to): Each project belongs to a user (owner)
+5. **Task → Project** (belongs-to): Each task belongs to a project
+6. **Task → User** (belongs-to): Each task can be assigned to a user (nullable)
+
+### Eloquent Query Scopes
+
+Models include reusable query scopes for common filters:
+
+**Project scopes:**
+- `Project::active()` - Get active projects
+- `Project::completed()` - Get completed projects
+
+**Task scopes:**
+- `Task::pending()` - Get pending tasks
+- `Task::inProgress()` - Get in-progress tasks
+- `Task::completed()` - Get completed tasks
+- `Task::highPriority()` - Get high priority tasks
+- `Task::overdue()` - Get overdue tasks
+- `Task::dueSoon()` - Get tasks due within 7 days
+
+### Model Computed Attributes
+
+**Project:**
+- `$project->progress` - Returns completion percentage based on tasks (0-100)
+
+**Task:**
+- `$task->is_overdue` - Returns boolean if task is overdue
+- `$task->days_until_due` - Returns integer days until due date
+
 ## Key Configuration Files
 
 - `vite.config.js` - Vite bundler configuration with Laravel plugin
@@ -143,6 +193,8 @@ npx shadcn@latest add [component-name]
 - `phpunit.xml` - PHPUnit/Pest test configuration
 - `composer.json` - PHP dependencies and scripts
 - `package.json` - Node.js dependencies and scripts
+- `jsconfig.json` - JavaScript path aliases configuration
+- `components.json` - shadcn/ui configuration
 
 ## Database
 
@@ -162,3 +214,21 @@ Authentication is handled by Laravel Breeze with Inertia.js stack:
 - Auth controllers are in `app/Http/Controllers/Auth/`
 - Auth pages (React) are in `resources/js/Pages/Auth/`
 - Uses Laravel Sanctum for API authentication
+
+## Route Patterns
+
+The application uses Laravel's resource routing for CRUD operations:
+
+```php
+Route::resource('projects', ProjectController::class);
+Route::resource('tasks', TaskController::class);
+```
+
+Resource routes automatically generate:
+- `index` - GET /projects (list all)
+- `create` - GET /projects/create (show form)
+- `store` - POST /projects (create new)
+- `show` - GET /projects/{id} (view one)
+- `edit` - GET /projects/{id}/edit (show edit form)
+- `update` - PATCH/PUT /projects/{id} (update)
+- `destroy` - DELETE /projects/{id} (delete)
