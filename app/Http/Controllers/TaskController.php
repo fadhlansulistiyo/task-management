@@ -40,8 +40,9 @@ class TaskController extends Controller
         $tasks = $this->taskService->getUserTasks($user);
 
         // Get user's projects for filtering
+        // Note: Include 'status' to prevent null errors in ProjectResource
         $projects = Project::where('user_id', $user->id)
-            ->select('id', 'name')
+            ->select('id', 'name', 'status')
             ->get();
 
         return Inertia::render('Tasks/Index', [

@@ -27,13 +27,16 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => [
-                'value' => $this->role->value,
-                'label' => $this->role->label(),
-            ],
+            'role' => $this->when(
+                $this->role !== null,
+                fn () => [
+                    'value' => $this->role->value,
+                    'label' => $this->role->label(),
+                ]
+            ),
             'email_verified_at' => $this->email_verified_at?->toISOString(),
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
 
             // Conditional relationships (only included if loaded)
             'projects' => ProjectResource::collection($this->whenLoaded('projects')),

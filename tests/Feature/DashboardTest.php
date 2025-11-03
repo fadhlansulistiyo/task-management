@@ -60,8 +60,8 @@ test('dashboard redirects unauthenticated users to login', function () {
 test('dashboard with projects displays correct data', function () {
     $user = User::factory()->create();
 
-    // Create a project with task
-    $project = $user->projects()->create([
+    // Create a project
+    $user->projects()->create([
         'name' => 'Test Project',
         'status' => 'active',
         'description' => 'Test Description',

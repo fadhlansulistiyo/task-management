@@ -25,22 +25,28 @@ class TaskResource extends JsonResource
             'assigned_to' => $this->assigned_to,
             'title' => $this->title,
             'description' => $this->description,
-            'priority' => [
-                'value' => $this->priority->value,
-                'label' => $this->priority->label(),
-                'color' => $this->priority->color(),
-                'weight' => $this->priority->weight(),
-            ],
-            'status' => [
-                'value' => $this->status->value,
-                'label' => $this->status->label(),
-                'color' => $this->status->color(),
-                'is_final' => $this->status->isFinal(),
-            ],
+            'priority' => $this->when(
+                $this->priority !== null,
+                fn () => [
+                    'value' => $this->priority->value,
+                    'label' => $this->priority->label(),
+                    'color' => $this->priority->color(),
+                    'weight' => $this->priority->weight(),
+                ]
+            ),
+            'status' => $this->when(
+                $this->status !== null,
+                fn () => [
+                    'value' => $this->status->value,
+                    'label' => $this->status->label(),
+                    'color' => $this->status->color(),
+                    'is_final' => $this->status->isFinal(),
+                ]
+            ),
             'due_date' => $this->due_date?->toDateString(),
             'completed_at' => $this->completed_at?->toISOString(),
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
 
             // Computed properties
             'is_overdue' => $this->is_overdue,

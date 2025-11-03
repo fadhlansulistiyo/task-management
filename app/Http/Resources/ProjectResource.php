@@ -24,15 +24,18 @@ class ProjectResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'description' => $this->description,
-            'status' => [
-                'value' => $this->status->value,
-                'label' => $this->status->label(),
-                'color' => $this->status->color(),
-            ],
+            'status' => $this->when(
+                $this->status !== null,
+                fn () => [
+                    'value' => $this->status->value,
+                    'label' => $this->status->label(),
+                    'color' => $this->status->color(),
+                ]
+            ),
             'start_date' => $this->start_date?->toDateString(),
             'end_date' => $this->end_date?->toDateString(),
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
 
             // Computed properties
             'progress' => $this->when(
