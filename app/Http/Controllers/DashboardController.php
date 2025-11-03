@@ -40,8 +40,9 @@ class DashboardController extends Controller
         $assignedTaskStats = $this->taskService->getAssignedTaskStats($user);
 
         // Get recent data
-        $recentProjects = $this->projectService->getUserProjects($user, 5);
-        $recentTasks = $this->taskService->getUserTasks($user, 10);
+        // Note: paginate() returns a LengthAwarePaginator, so we need to get items
+        $recentProjects = $this->projectService->getUserProjects($user, 5)->items();
+        $recentTasks = $this->taskService->getUserTasks($user, 10)->items();
         $overdueTasks = $this->taskService->getOverdueTasks($user);
         $tasksDueSoon = $this->taskService->getTasksDueSoon($user);
 
@@ -51,10 +52,10 @@ class DashboardController extends Controller
                 'tasks' => $taskStats,
                 'assigned_tasks' => $assignedTaskStats,
             ],
-            'recent_projects' => ProjectResource::collection($recentProjects),
-            'recent_tasks' => TaskResource::collection($recentTasks),
-            'overdue_tasks' => TaskResource::collection($overdueTasks),
-            'tasks_due_soon' => TaskResource::collection($tasksDueSoon),
+            'recent_projects' => ProjectResource::collection($recentProjects)->resolve(),
+            'recent_tasks' => TaskResource::collection($recentTasks)->resolve(),
+            'overdue_tasks' => TaskResource::collection($overdueTasks)->resolve(),
+            'tasks_due_soon' => TaskResource::collection($tasksDueSoon)->resolve(),
         ]);
     }
 }
