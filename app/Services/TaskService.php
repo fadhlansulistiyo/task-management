@@ -177,7 +177,7 @@ class TaskService
         return Task::whereHas('project', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-            ->dueSoon()
+            ->dueSoon($days)
             ->with(['project', 'assignedUser'])
             ->orderBy('due_date')
             ->get();

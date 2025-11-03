@@ -105,11 +105,11 @@ class Task extends Model
     }
 
     /**
-     * Query Scope: Get tasks due soon (within next 7 days)
+     * Query Scope: Get tasks due soon (within next N days)
      */
-    public function scopeDueSoon($query)
+    public function scopeDueSoon($query, int $days = 7)
     {
-        return $query->whereBetween('due_date', [now(), now()->addDays(7)])
+        return $query->whereBetween('due_date', [now(), now()->addDays($days)])
             ->whereNotIn('status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED]);
     }
 
