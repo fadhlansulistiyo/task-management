@@ -86,8 +86,20 @@ npm run build
   - `ProjectStatus.php` - Project status enumeration (ACTIVE, COMPLETED, etc.)
   - `TaskStatus.php` - Task status enumeration (PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
   - `TaskPriority.php` - Task priority enumeration
-- **Middleware**: Located in `app/Http/Middleware/`
+- **Services**: Located in `app/Services/`
+  - `ProjectService.php` - Business logic for project management
+  - `TaskService.php` - Business logic for task management
+- **API Resources**: Located in `app/Http/Resources/`
+  - `UserResource.php` - Transforms User model for API responses
+  - `ProjectResource.php` - Transforms Project model for API responses
+  - `TaskResource.php` - Transforms Task model for API responses
 - **Form Requests**: Located in `app/Http/Requests/`
+  - `StoreProjectRequest.php`, `UpdateProjectRequest.php` - Project validation
+  - `StoreTaskRequest.php`, `UpdateTaskRequest.php` - Task validation
+- **Policies**: Located in `app/Policies/`
+  - `ProjectPolicy.php` - Authorization logic for projects
+  - `TaskPolicy.php` - Authorization logic for tasks
+- **Middleware**: Located in `app/Http/Middleware/`
 - **Database**: Uses SQLite (`database/database.sqlite`)
   - Migrations in `database/migrations/`
   - Factories in `database/factories/`
@@ -100,18 +112,25 @@ npm run build
   - `Auth/` - Authentication pages (Login, Register, etc.)
   - `Profile/` - Profile management pages
   - `Dashboard.jsx` - Main dashboard
+  - `Projects/` - Project CRUD pages (Index, Create, Edit, Show)
+  - `Tasks/` - Task CRUD pages (Index, Create, Edit, Show)
   - `Welcome.jsx` - Public landing page
 - **Layouts**: `resources/js/Layouts/` - Shared layout components
   - `AuthenticatedLayout.jsx` - Layout for authenticated users
   - `GuestLayout.jsx` - Layout for guest users
 - **Components**: `resources/js/Components/` - Reusable React components
   - `ui/` - shadcn/ui components (button, card, dialog, etc.)
+  - `Dashboard/` - Dashboard-specific components (StatCard, TasksByStatus, etc.)
+  - `Projects/` - Project-specific components (ProjectCard, ProjectList, ProjectForm)
+  - `Tasks/` - Task-specific components (TaskCard, TaskList, TaskForm, TaskStatusBadge)
   - Breeze components (TextInput, InputLabel, PrimaryButton, etc.)
 - **Hooks**: `resources/js/hooks/` - Custom React hooks
+  - `use-toast.js` - Toast notification hook
+  - `use-mobile.jsx` - Mobile detection hook
 - **Utilities**: `resources/js/lib/` - Utility functions (including `cn()` for className merging)
 - **Styles**: `resources/css/app.css` - Tailwind CSS entry point
 
-**Path Aliases** (configured in `jsconfig.json`):
+**Path Aliases** (configured in `jsconfig.json` and `components.json`):
 - `@/*` → `resources/js/*`
 - `@/components` → `resources/js/Components`
 - `@/components/ui` → `resources/js/Components/ui`
@@ -185,6 +204,35 @@ Models include reusable query scopes for common filters:
 **Task:**
 - `$task->is_overdue` - Returns boolean if task is overdue
 - `$task->days_until_due` - Returns integer days until due date
+
+### Service Layer Pattern
+
+The application uses a service layer to encapsulate business logic:
+
+**ProjectService** (`app/Services/ProjectService.php`):
+- `getUserProjects()` - Get paginated projects for a user
+- `getActiveProjects()` - Get all active projects
+- `createProject()` - Create a new project
+- `updateProject()` - Update an existing project
+- `deleteProject()` - Delete a project and all its tasks
+- `getProjectDetails()` - Get project with full details including tasks and stats
+- `getProjectStats()` - Get project statistics
+- `searchProjects()` - Search projects by name or description
+- `archiveProject()` - Archive a project
+- `completeProject()` - Mark project as completed
+
+**TaskService** (`app/Services/TaskService.php`):
+- Similar methods for task management
+
+### API Resources
+
+The application uses API Resources to transform models into consistent JSON responses:
+
+- `UserResource` - Transforms User model, hides sensitive fields
+- `ProjectResource` - Transforms Project model with relationships
+- `TaskResource` - Transforms Task model with relationships
+
+These are used in controllers to format data sent to Inertia.js pages.
 
 ## Key Configuration Files
 
